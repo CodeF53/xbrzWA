@@ -6,14 +6,6 @@ const ColorFormat = {
   ARGB: 1,
   ARGB_UNBUFFERED: 2
 };
-const ScalerCfg = {
-  luminanceWeight: 1,
-  equalColorTolerance: 30,
-  centerDirectionBias: 4,
-  dominantDirectionThreshold: 3.6,
-  steepDirectionThreshold: 2.2,
-  newTestAttribute: 0
-};
 
 async function initialize() {
   const result = await WebAssembly.instantiateStreaming(fetch('xbrz.wasm'), {
@@ -46,7 +38,7 @@ async function scale(canvas, scaleFactor) {
   // create target array
   const trgData = new Uint32Array(scaleWidth * scaleHeight);
 
-  // pointer blackMagic
+  // pointer black magic
   const inputSize = srcData.length * srcData.BYTES_PER_ELEMENT;
   const inputOffset = instance.exports.stackAlloc(inputSize);
   const inputBuffer = new Uint8Array(instance.exports.memory.buffer, inputOffset, inputSize);
@@ -59,18 +51,19 @@ async function scale(canvas, scaleFactor) {
     width,
     height,
     ColorFormat.ARGB_UNBUFFERED,
-    ScalerCfg, // TODO: it doesn't like this config
     0,
     scaleHeight
   );
 
+  // obtain result using black magic
   const resultData = new Uint32Array(instance.exports.memory.buffer, resultOffset, trgData.length);
-
   instance.exports.stackRestore(inputOffset);
 
+  // create output canvas
   const scaledCanvas = document.createElement('canvas');
   scaledCanvas.width = scaleWidth;
   scaledCanvas.height = scaleHeight;
+  // add image to new canvas
   const scaledCtx = scaledCanvas.getContext('2d');
   const scaledImageData = scaledCtx.createImageData(scaleWidth, scaleHeight);
   const scaledData = new Uint32Array(scaledImageData.data.buffer);
