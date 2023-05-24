@@ -19,7 +19,7 @@ async function loadImage() {
 
     document.body.appendChild(scaleCanvas)
   };
-  image.src = 'apple.png';
+  image.src = 'source.png';
 }
 
 // Call the loadImage function when the page has finished loading

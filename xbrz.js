@@ -38,7 +38,7 @@ async function scale(canvas, scaleFactor) {
   // create target array
   const trgData = new Uint32Array(scaleWidth * scaleHeight);
 
-  // pointer black magic
+  // black magic
   const inputSize = srcData.length * srcData.BYTES_PER_ELEMENT;
   const inputOffset = instance.exports.stackAlloc(inputSize);
   const inputBuffer = new Uint8Array(instance.exports.memory.buffer, inputOffset, inputSize);
