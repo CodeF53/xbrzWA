@@ -8,7 +8,7 @@ const ColorFormat = {
 };
 
 async function initialize() {
-  const result = await WebAssembly.instantiateStreaming(fetch('xbrz.wasm'), {
+  const result = await WebAssembly.instantiateStreaming(fetch('https://codef53.github.io/xbrzWA/xbrz.wasm'), {
     wasi_snapshot_preview1: {
       fd_write: () => {},
       fd_close: () => {},
