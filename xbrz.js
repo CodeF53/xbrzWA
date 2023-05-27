@@ -35,8 +35,6 @@ async function scale(canvas, scaleFactor) {
   const ctx = canvas.getContext('2d');
   const imageData = ctx.getImageData(0, 0, width, height);
   const srcData = new Uint32Array(imageData.data.buffer);
-  // create target array
-  const trgData = new Uint32Array(scaleWidth * scaleHeight);
 
   // black magic
   const inputSize = srcData.length * srcData.BYTES_PER_ELEMENT;
@@ -47,7 +45,6 @@ async function scale(canvas, scaleFactor) {
   const resultOffset = xbrzScale(
     scaleFactor,
     inputOffset,
-    trgData,
     width,
     height,
     ColorFormat.ARGB_UNBUFFERED,
@@ -56,7 +53,7 @@ async function scale(canvas, scaleFactor) {
   );
 
   // obtain result using black magic
-  const resultData = new Uint32Array(instance.exports.memory.buffer, resultOffset, trgData.length);
+  const resultData = new Uint32Array(instance.exports.memory.buffer, resultOffset, scaleWidth * scaleHeight);
   instance.exports.stackRestore(inputOffset);
 
   // create output canvas

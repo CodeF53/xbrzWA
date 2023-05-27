@@ -3,7 +3,6 @@ An almost-perfect port of xBRZ to web using WASM.
 
 Broken bits:
 1. You can't specify options, so it always defaults to the ones found in `xbrz_config.h`
-2. Images that are too large break it ![](https://iili.io/Hgm8S6v.png)
 
 ## Compiling Instructions
 This assumes you already have WSL installed, if you don't, install it.
