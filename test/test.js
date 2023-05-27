@@ -1,4 +1,4 @@
-import { scale } from './xbrz.js';
+import { scale } from '../xbrz.js';
 
 async function loadImage() {
   const canvas = document.createElement('canvas');

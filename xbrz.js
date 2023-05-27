@@ -8,7 +8,11 @@ const ColorFormat = {
 };
 
 async function initialize() {
-  const result = await WebAssembly.instantiateStreaming(fetch('xbrz.wasm'), {
+  // Get the correct location of xbrz.wasm
+  const wasmPath = new URL('xbrz.wasm', import.meta.url).href;
+
+  // Load in xbrz.wasm
+  const result = await WebAssembly.instantiateStreaming(fetch(wasmPath), {
     wasi_snapshot_preview1: {
       fd_write: () => {},
       fd_close: () => {},
@@ -16,7 +20,7 @@ async function initialize() {
       proc_exit: () => {}
     }
   });
-
+  // Save WASM instance and xbrzScale function in the global scope
   instance = result.instance;
   xbrzScale = result.instance.exports.xbrz_scale;
 }
@@ -56,12 +60,13 @@ async function scale(canvas, scaleFactor) {
   const resultData = new Uint32Array(instance.exports.memory.buffer, resultOffset, scaleWidth * scaleHeight);
   instance.exports.stackRestore(inputOffset);
 
-  // create output canvas
+  // create result canvas
   const scaledCanvas = document.createElement('canvas');
   scaledCanvas.width = scaleWidth;
   scaledCanvas.height = scaleHeight;
-  // add image to new canvas
   const scaledCtx = scaledCanvas.getContext('2d');
+
+  // draw result canvas
   const scaledImageData = scaledCtx.createImageData(scaleWidth, scaleHeight);
   const scaledData = new Uint32Array(scaledImageData.data.buffer);
   scaledData.set(resultData);
