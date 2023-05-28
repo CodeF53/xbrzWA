@@ -18,6 +18,14 @@ cd xbrz
 2. Extract it into a folder called `/xbrz` inside this repository
     - Structure should look like `xbrzWA/xbrz/xbrz.cpp`
 
+Or run the following:
+```
+mkdir xbrz
+cd xbrz
+curl https://phoenixnap.dl.sourceforge.net/project/xbrz/xBRZ/xBRZ_1.8.zip | jar xv
+cd ..
+```
+
 ### Installing Emscripten
 Inside of the root of this repository, run the following commands
 ```
