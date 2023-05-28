@@ -8,7 +8,11 @@ const ColorFormat = {
 };
 
 async function initialize() {
-  const result = await WebAssembly.instantiateStreaming(fetch('https://codef53.github.io/xbrzWA/xbrz.wasm'), {
+  // Get the correct location of xbrz.wasm
+  const wasmPath = new URL('xbrz.wasm', import.meta.url).href;
+
+  // Load in xbrz.wasm
+  const result = await WebAssembly.instantiateStreaming(fetch(wasmPath), {
     wasi_snapshot_preview1: {
       fd_write: () => {},
       fd_close: () => {},
@@ -16,7 +20,7 @@ async function initialize() {
       proc_exit: () => {}
     }
   });
-
+  // Save WASM instance and xbrzScale function in the global scope
   instance = result.instance;
   xbrzScale = result.instance.exports.xbrz_scale;
 }
@@ -35,10 +39,8 @@ async function scale(canvas, scaleFactor) {
   const ctx = canvas.getContext('2d');
   const imageData = ctx.getImageData(0, 0, width, height);
   const srcData = new Uint32Array(imageData.data.buffer);
-  // create target array
-  const trgData = new Uint32Array(scaleWidth * scaleHeight);
 
-  // pointer black magic
+  // black magic
   const inputSize = srcData.length * srcData.BYTES_PER_ELEMENT;
   const inputOffset = instance.exports.stackAlloc(inputSize);
   const inputBuffer = new Uint8Array(instance.exports.memory.buffer, inputOffset, inputSize);
@@ -47,7 +49,6 @@ async function scale(canvas, scaleFactor) {
   const resultOffset = xbrzScale(
     scaleFactor,
     inputOffset,
-    trgData,
     width,
     height,
     ColorFormat.ARGB_UNBUFFERED,
@@ -56,15 +57,16 @@ async function scale(canvas, scaleFactor) {
   );
 
   // obtain result using black magic
-  const resultData = new Uint32Array(instance.exports.memory.buffer, resultOffset, trgData.length);
+  const resultData = new Uint32Array(instance.exports.memory.buffer, resultOffset, scaleWidth * scaleHeight);
   instance.exports.stackRestore(inputOffset);
 
-  // create output canvas
+  // create result canvas
   const scaledCanvas = document.createElement('canvas');
   scaledCanvas.width = scaleWidth;
   scaledCanvas.height = scaleHeight;
-  // add image to new canvas
   const scaledCtx = scaledCanvas.getContext('2d');
+
+  // draw result canvas
   const scaledImageData = scaledCtx.createImageData(scaleWidth, scaleHeight);
   const scaledData = new Uint32Array(scaledImageData.data.buffer);
   scaledData.set(resultData);
