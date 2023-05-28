@@ -40,10 +40,13 @@ async function scale(canvas, scaleFactor) {
   const imageData = ctx.getImageData(0, 0, width, height);
   const srcData = new Uint32Array(imageData.data.buffer);
 
-  // black magic
+  // calculate buffer size in bytes
   const inputSize = srcData.length * srcData.BYTES_PER_ELEMENT;
-  const inputOffset = instance.exports.stackAlloc(inputSize);
+  // allocate memory on the stack
+  const inputOffset = instance.exports.malloc(inputSize);
+  // create a Uint8Array view of the allocated memory
   const inputBuffer = new Uint8Array(instance.exports.memory.buffer, inputOffset, inputSize);
+  // copy srcData to inputBuffer
   inputBuffer.set(new Uint8Array(srcData.buffer));
 
   const resultOffset = xbrzScale(
@@ -56,9 +59,10 @@ async function scale(canvas, scaleFactor) {
     scaleHeight
   );
 
-  // obtain result using black magic
+  // read memory from stack
   const resultData = new Uint32Array(instance.exports.memory.buffer, resultOffset, scaleWidth * scaleHeight);
-  instance.exports.stackRestore(inputOffset);
+  // free memory
+  instance.exports.free(inputOffset);
 
   // create result canvas
   const scaledCanvas = document.createElement('canvas');
