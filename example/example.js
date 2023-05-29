@@ -1,4 +1,4 @@
-import { scale } from '../xbrz.js';
+import { initialize, scale } from '../xbrz.js';
 
 async function loadImage() {
   const canvas = document.createElement('canvas');
@@ -12,6 +12,9 @@ async function loadImage() {
     context.drawImage(image, 0, 0);
 
     document.body.appendChild(canvas);
+
+    // Initialize webassembly environment (technically optional, but advised if scaling in parallel)
+    await initialize();
 
     // Call the scale function with the canvas and scale factor
     const scaleFactor = 4;
