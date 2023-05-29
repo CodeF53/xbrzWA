@@ -46,7 +46,7 @@ async function scale(canvas, scaleFactor) {
   inputBuffer.set(new Uint8Array(srcData.buffer));
 
   // create memory region for output
-  const outputLength = scaleWidth * scaleHeight
+  const outputLength = scaleWidth * scaleHeight;
   const outputOffset = instance.exports.malloc(outputLength * srcData.BYTES_PER_ELEMENT);
 
   // scale (fills output memory region with scaled image)

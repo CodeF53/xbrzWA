@@ -39,5 +39,5 @@ cd ..
 
 ### Compiling
 ```
-em++ -O3 -s "EXPORTED_FUNCTIONS=['_xbrz_scale', '_malloc', '_free']" -o xbrz.wasm xbrz_wrapper.cpp ./xbrz/xbrz.cpp -I./xbrz
+em++ -O3 -s "EXPORTED_FUNCTIONS=['_xbrz_scale', '_malloc', '_free']" -o xbrz.wasm xbrz_wrapper.cpp ./xbrz/xbrz.cpp -I./xbrz -s TOTAL_MEMORY=512MB
 ```
